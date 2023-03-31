@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>{{ questionnaire.title }}</h2>
+    <ul>
+    {% for question in questionnaire.question_set.all %}
+        <li>{{ question.question }} - <a href="{% url 'question-detail' question.id %}">View Details</a></li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'question-create' questionnaire.id %}">Add Question to this Questionnaire</a> ----    
+    <a href="{% url 'questionnaire-update' questionnaire.id %}">Edit Questionnaire</a>
+
+{% endblock %}

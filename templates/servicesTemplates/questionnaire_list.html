@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Your questionnaires</h2>
+    <ul>
+    {% for questionnaire in questionnaires %}
+        <li>{{ questionnaire.title }} - <a href="{% url 'questionnaire-detail' questionnaire.id %}">View Details</a>  -- 
+            <a href="{% url 'questionnaire-remove' questionnaire.id %}">Delete Questionnaire</a>  </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

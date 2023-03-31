@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Create Game</h1>
+  <form id="create-game-form" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create Game">
+  </form>
+  <div id="game-create-status"></div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function() {
+      $('#create-game-form').on('submit', function(e) {
+        e.preventDefault();
+        $.ajax({
+          url: $(this).attr('action'),
+          type: "POST",
+          dataType: "json",
+          data: $(this).serialize(),
+          success: function(data) {
+            if (data.status == 'success') {
+              $('#game-create-status').html('Game created successfully. Redirecting to lobby...');
+              window.location.href = "{% url 'game-lobby' 0 %}".replace('0', data.game_id);
+            }
+          },
+          error: function(xhr, errmsg, err) {
+            var errors = xhr.responseJSON;
+            var errorMessages = '';
+            for (var field in errors) {
+              errorMessages += '<p>' + errors[field][0] + '</p>';
+            }
+            errorMessages += ' does not belong to logged user'
+            $('#game-create-status').html(errorMessages);
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>{{ question.question }}</h2>
+  <h3>Answers</h3>
+  <ul>
+    {% for answer in question.answer_set.all %}
+      <li>{{ answer.answer }}  --  <a href="{% url 'answer-remove' answer.id %}">Remove Answer</a>  -- 
+        <a href="{% url 'answer-update' answer.id %}">Update Answer</a></li> 
+    {% endfor %}
+  </ul>
+    <a href="{% url 'answer-create' question.id %}">Add Answer</a>
+    <a href="{% url 'question-update' question.id %}">Edit Question</a>
+    <a href="{% url 'question-remove' question.id %}">Delete Question</a>
+
+{% endblock %}
