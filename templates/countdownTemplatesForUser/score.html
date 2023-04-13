@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h2>Score</h2>
+        <p>Your current score is: {{ score }}</p>
+        <a href="{% url 'game-count-down' %}">Next question</a>
+    </div>
+{% endblock %}

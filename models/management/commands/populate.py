@@ -74,6 +74,8 @@ class Command(BaseCommand):
         self.question()  # create questions
         self.answer()  # create answers
         self.game()  # create games
+        self.participant()  # create participants
+        self.guess()  # create guesses        
 
     def cleanDataBase(self):
         Guess.objects.all().delete()
@@ -132,3 +134,34 @@ class Command(BaseCommand):
                                        countdownTime=self.faker.random_int(min=5, max=30),
                                        questionNo=self.faker.random_int(min=1, max=10))
             print(f"Created game {game.publicId}")
+            
+            
+    def participant(self):
+        print("Participant")
+        games = Game.objects.all()
+        aliases = [f'Player{i}' for i in range(1, self.NUMBERPARTICIPANTS + 1)]
+        for game in games:
+            for alias in aliases:
+                participant = Participant.objects.create(
+                    game=game,
+                    alias=alias
+                )
+                print(f"Created participant {participant.alias} in Game {game.publicId}")
+                
+
+    def guess(self):
+        print("Guess")
+        participants = Participant.objects.all()
+        for participant in participants:
+            game = participant.game
+            questions = game.questionnaire.question_set.all()
+            for question in questions:
+                answers = question.answer_set.all()
+                chosen_answer = self.faker.random_element(answers)
+                guess = Guess.objects.create(
+                    participant=participant,
+                    game=game,
+                    question=question,
+                    answer=chosen_answer
+                )
+                print(f"{participant.alias} in Game {game.publicId} guessed {guess.answer.answer}")

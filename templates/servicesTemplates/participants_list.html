@@ -1,0 +1,8 @@
+<div id="participants_list">
+    <h1>Participants list:</h1>
+    <ul>
+      {% for participant in participants %}
+        <li>{{ participant.alias }}</li>
+      {% endfor %}
+    </ul>
+</div>

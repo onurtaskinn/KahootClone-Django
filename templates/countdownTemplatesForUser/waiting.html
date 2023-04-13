@@ -1,0 +1,34 @@
+{% block content %}
+    <div class="container">
+        <h1 class="text-center">Waiting for Players</h1>
+        <p class="text-center">Game ID: {{ public_id }}</p>
+        <p class="text-center">Please wait while other participants join the game.</p>
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <a href="{% url 'game-count-down' %}"> -Start Game- </a>
+    </div>
+    <script>
+        // Poll the server for updates on the game state
+    //     function checkGameState() {
+    //         // Replace this URL with the appropriate API URL for your application
+    //         const url = `/game-count-down/${encodeURIComponent('{{ public_id }}')}/`;
+
+    //         fetch(url)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 if (data.game_state !== 'WAITING') {
+    //                     location.reload();
+    //                 }
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error fetching game state:', error);
+    //             });
+    //     }
+
+    //     // Check the game state every 5 seconds
+    //     setInterval(checkGameState, 5000);
+    // </script>
+{% endblock %}

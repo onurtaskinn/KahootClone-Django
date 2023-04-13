@@ -265,6 +265,12 @@ class GameCreateView(View):
         request.session['game_public_id'] = game.publicId
         request.session['game_state'] = WAITING
         #request.session['game'] = game
+        
+        participant = Participant.objects.create(game=game, alias = self.request.user , points = 10)
+        participant = Participant.objects.create(game=game, alias = "ozan" , points = 10)
+        participant = Participant.objects.create(game=game, alias = "mehmet" , points = 10)
+        participant = Participant.objects.create(game=game, alias = "gulen" , points = 10)
+        
 
         # Redirect to the detail view for the newly created game
         return redirect('game-updateparticipant', public_id=game.publicId)
@@ -317,3 +323,137 @@ class GameUpdateParticipantView(TemplateView):
     
     
     
+    
+from django.shortcuts import render, redirect
+from django.views import View
+from django.urls import reverse
+from models.constants import WAITING, QUESTION, ANSWER, LEADERBOARD
+from models.models import Game, Question, Participant
+
+
+class GameCountdownView(View):
+    def get_context_data(self, game_state, game):
+        public_id = self.kwargs.get('public_id') or self.request.session.get('game_public_id')
+        game = Game.objects.filter(publicId=public_id).first()
+        numberOfQuestions = game.questionnaire.question_set.count()
+        if game_state == WAITING:
+            #print("get_contex_data WAITING")
+            return {}
+        elif game_state == QUESTION:
+            #print("get_contex_data QUESTION")
+            if(numberOfQuestions >= game.questionNo):
+                question = Question.objects.filter(questionnaire = game.questionnaire)[game.questionNo-1]
+                return {'question': question}
+        elif game_state == ANSWER:
+            #print("get_contex_data ANSWER")
+            # Get the score, you may need to modify this based on your implementation
+            points = Participant.objects.get(alias=self.request.user, game=game).points
+            return {'score': points}
+        elif game_state == "LEADERBOARD":
+            #print("get_contex_data LEADERBOARD")
+            points = Participant.objects.get(alias=self.request.user, game=game).points
+            leaderboard = Participant.objects.filter(game=game).order_by('-points')
+            return {'leaderboard': leaderboard}
+        # elif game_state == "FINISHED":
+        #     #print("get_contex_data LEADERBOARD")
+        #     points = Participant.objects.get(alias=self.request.user, game=game).points
+        #     leaderboard = Participant.objects.filter(game=game).order_by('-points')
+        #     return {'leaderboard': leaderboard,}
+    
+    def get(self, request, *args, **kwargs):
+        public_id = self.request.session.get('game_public_id') or self.kwargs.get('public_id') #or self.request.session.get('public_id')
+        participant_alias = self.request.session.get('participant_alias')
+        game = Game.objects.filter(publicId=public_id).first()
+        
+        numberOfQuestions = game.questionnaire.question_set.count() 
+        
+        
+        if game.state == WAITING:
+            #print("WAITING _ GET")
+            context = self.get_context_data(game.state, game)    
+            request.session['game_state'] = QUESTION
+            #request.session['first'] = "true"
+            game.state = QUESTION
+            game.save()
+            return render(request, 'countdownTemplatesForUser/countdown.html',context)
+
+        current_state = request.session.get('game_state', None)
+        
+        # if game.state == COUNTDOWN:
+        #     context = self.get_context_data(game.state, game)              
+        #     print("COUNTDOWN state")
+        #     request.session['game_state'] = QUESTION
+        #     game.state = QUESTION
+        #     game.save()
+        #     print("if : countdown, state: question ")                  
+        #     return render(request, 'countdownTemplatesForUser/countdown.html',context)
+
+        if current_state == QUESTION:
+            #print("QUESTION_ GET")
+            context = self.get_context_data(game.state, game)   
+            #question = Question.objects.first()  # Replace with the appropriate question retrieval method
+            request.session['game_state'] = ANSWER
+            game.state = ANSWER
+            game.save()
+            return render(request, 'countdownTemplatesForUser/question.html', context)
+
+        if current_state == ANSWER:
+            #print("ANSWER _ GET")
+            context = self.get_context_data(game.state, game)                                    
+            request.session['game_state'] = QUESTION if not numberOfQuestions==game.questionNo else LEADERBOARD
+            game.questionNo += 1
+            game.state = request.session['game_state']
+            game.save()
+            return render(request, 'countdownTemplatesForUser/score.html', context)
+
+
+        if current_state == LEADERBOARD:
+            #print("LEADERBOARD _ GET")
+            request.session['game_state'] = FINISHED
+            context = self.get_context_data(game.state, game)                        
+            game.state = FINISHED
+            game.save()
+            leaderboard = []              # Replace with the actual leaderboard calculation logic
+            return render(request, 'countdownTemplatesForUser/leaderboard.html', context)
+
+        return redirect('/')  # Replace with an appropriate redirect URL in case of any issues
+    
+    
+    def post(self, request, *args, **kwargs):
+        #print("POST")
+        public_id = self.kwargs.get('public_id') or self.request.session.get('game_public_id')
+        current_state = request.session.get('game_state', None)
+        game = Game.objects.filter(publicId=public_id).first()
+        numberOfQuestions = game.questionnaire.question_set.count()
+
+        if current_state == ANSWER:
+            # Get the selected answer from the form data
+            answer_id = request.POST.get('answer', None)
+            #print("answer id : ", answer_id)
+            
+            if answer_id:
+                # Get the answer object from the database
+                selected_answer = Answer.objects.filter(id=answer_id).first()
+                if selected_answer:
+                    # Compare the selected answer with the correct answer and update the score
+                    is_correct = selected_answer.correct
+                    #print(Participant.objects.all())
+                    participant = Participant.objects.get(alias=self.request.user, game=game)
+                    if is_correct:
+                        participant.points += 10
+                        participant.save()
+
+            # Move to the next question or leaderboard
+            request.session['game_state'] = QUESTION if not numberOfQuestions==game.questionNo else LEADERBOARD
+            game.questionNo += 1
+            game.save()
+
+        # Redirect to the appropriate view based on the game state
+        if request.session['game_state'] == QUESTION:
+            return redirect('game-count-down')
+        elif request.session['game_state'] == LEADERBOARD:
+            return redirect('game-count-down')
+
+        #return redirect('/')  # Replace with an appropriate redirect URL in case of any issues
+        
+        

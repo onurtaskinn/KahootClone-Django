@@ -43,13 +43,18 @@ else :
     print('debug in render')
     DEBUG = 'RENDER' not in os.environ
     print(DEBUG)
-    
-    
-ALLOWED_HOSTS = [ ' localhost ' , '127.0.0' ]    
 
-RENDER_EXTERNAL_HOSTNAME= os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS. append (RENDER_EXTERNAL_HOSTNAME)
+print(DEBUG)    
+    
+    
+ALLOWED_HOSTS = [ ' localhost ' , '127.0.0.1' , 'my-third-assignment.onrender.com']    
+
+# RENDER_EXTERNAL_HOSTNAME= os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+# if RENDER_EXTERNAL_HOSTNAME:
+#     ALLOWED_HOSTS. append (RENDER_EXTERNAL_HOSTNAME)
+
+#DEBUG = False
+
 
 #ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS','').split(' ')
 
@@ -134,17 +139,14 @@ WSGI_APPLICATION = 'kahootclone.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = {}
 
+import os
 import dj_database_url
+
 if 'TESTING' in os.environ:
     print("os")
-    db_from_env = {
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'psi',
@@ -156,7 +158,7 @@ if 'TESTING' in os.environ:
     }
 else:
     print("neon")
-    db_from_env = {
+    DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.getenv('DATABASE_NAME'),
@@ -166,8 +168,6 @@ else:
             'PORT': os.getenv('DATABASE_PORT'),
         }
     }
-    
-DATABASES[ ' default ' ] = db_from_env    
 
 
 # Password validation
