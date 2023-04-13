@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if error_message %}<p>{{ error_message }}</p>{% endif %}
+
+
+<p>Questionnaire ID: {{ game.questionnaire.id }}</p>
+<p>Game ID: {{ game.id }}</p>
+<p>Game state: {{ game.state }}</p>
+
+<h1>Game {{ game.publicId }} Created</h1>
+<p>Questionnaire Title: {{ game.questionnaire.title }}</p>
+
+<div id="participants-container">
+  {% include "servicesTemplates/participants_list.html" %}
+</div>
+
+<a href="{% url 'game-count-down' %}"> CountDown- </a>
+
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<script>
+  function refresh() {
+      let public_id = "{{ public_id }}";
+      let url = public_id ? "{% url 'game-updateparticipant' public_id=0 %}".replace('0', public_id) : '';
+
+      $.ajax({
+          url: url,
+          success: function(data) {
+              $('#participants-container').html(data);
+          }
+      });
+  }
+  
+  $(document).ready(function() {
+      setInterval(refresh, 2000); // Changed from setTimeout to setInterval
+  });
+  </script>
+
+{% endblock %}

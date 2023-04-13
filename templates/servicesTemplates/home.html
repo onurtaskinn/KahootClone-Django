@@ -5,13 +5,14 @@
     <h2>Your last 5 questionnaires</h2>
     <ul>
     {% for questionnaire in questionnaires %}
-        <li>{{ questionnaire.title }} - <a href="{% url 'questionnaire-detail' questionnaire.id %}">View Details</a> -     <a href="{% url 'question-create' questionnaire.id %}">Add Question to this Questionnaire</a>
+        <li>{{ questionnaire.title }} - <a href="{% url 'questionnaire-detail' questionnaire.id %}">View Details</a> - 
+                <a href="{% url 'question-create' questionnaire.id %}">Add Question to this Questionnaire - </a>
+                <a href="{% url 'game-create' questionnaire.id %}">Create Game with this Questionnaire</a>
         </li>
     {% endfor %}
     </ul>
+
 {% else %}
-    <a href="{% url 'login' %}">Log in</a>
-    <a href="{% url 'signup' %}">Sign up</a>
 
 {% endif %}
 {% endblock %}

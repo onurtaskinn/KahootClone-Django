@@ -1,5 +1,5 @@
 from django import forms
-from models.models import Question, Answer, Game
+from models.models import Question, Answer, Game, Participant
 
 class QuestionForm(forms.ModelForm):
     class Meta:
@@ -14,5 +14,7 @@ class AnswerForm(forms.ModelForm):
 class GameForm(forms.ModelForm):
     class Meta:
         model = Game
-        fields = ['state','countdownTime','questionNo']     
+        fields = ['state']
+
+
         

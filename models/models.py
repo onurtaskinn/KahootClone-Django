@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
 import random
+from django.contrib.auth.models import User
+
 
 class User(AbstractUser):
     """
@@ -14,6 +16,9 @@ class Questionnaire(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    class Meta:
+        ordering = ['title']
 
 
     def __str__(self):
@@ -38,10 +43,22 @@ class Answer(models.Model):
         return self.answer
 
 class Game(models.Model):
+    WAITING = 'WAITING'
+    IN_PROGRESS = 'IN_PROGRESS'
+    ENDED = 'ENDED'
+
+    STATE_CHOICES = [
+        (WAITING, 'Waiting for participants'),
+        (IN_PROGRESS, 'In progress'),
+        (ENDED, 'Ended'),
+    ]
+
+    # Add the following field to the Game model
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
-    state = models.CharField(max_length=50)
-    countdownTime = models.IntegerField()
-    questionNo = models.IntegerField()
+    state = models.CharField(max_length=15, choices=STATE_CHOICES, default=WAITING)
+    #state = models.CharField(max_length=50)
+    countdownTime = models.IntegerField(null=True)
+    questionNo = models.IntegerField(null=True, default=1)
     publicId = models.IntegerField(unique=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -52,15 +69,23 @@ class Game(models.Model):
         if not self.publicId:
             self.publicId = random.randint(1, 10**6)
         super(Game, self).save(*args, **kwargs)
+        
+    # def is_last_question(self):
+    #     return self.questionNo == self.questionnaire.question_set.count() 
+  
 
 class Participant(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='participants', null=True)
     alias = models.CharField(max_length=255)
     points = models.IntegerField(default=0)
-    uuid_p = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    uuidP = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     def __str__(self):
         return f"{self.alias} (Game {self.game.publicId})"
+    
+    class Meta:
+        unique_together = ('game', 'alias',)        
+    
 
 class Guess(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
@@ -78,3 +103,33 @@ class Guess(models.Model):
 
     def __str__(self):
         return f"{self.participant.alias} guessed {self.answer.answer}"
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# class GameParticipant(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+#     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+

@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
    <head>
+      <style>
+         .correct-answer {
+            color: red;
+         }
+      </style>
       <title>
-         {% block title %} BookShop {% endblock %}
+         {% block title %} Kahoot {% endblock %}
       </title>
    </head>
    <body>
       {% block header %} 
-      <p>Header goes here</p>
+      <a href="{% url 'home' %}" class="my-link">Homepage</a><br><br>
       <hr>
       {% endblock %}
       {% block menu %}
-      <a href="{% url 'home' %}"> Homepage</a> ---
+
+      <style>
+         .my-link {
+            color: rgb(98, 16, 220);
+            font-size: 40px; /* Change the font size of links with class="my-link" */
+            font-family: Arial, sans-serif;
+            background-color: rgb(255, 255, 255);
+         }
+     </style>
+     
       {% if user.is_authenticated %}
+         <h3>Username : {{user.username}}</h3>
          <a href="{% url 'logout' %}">Log Out</a> ---
          <a href="{% url 'questionnaire-list' %}">questionnaire-list</a> ---
          <a href="{% url 'questionnaire-create' %}">questionnaire-create</a> ---
-         <a href="{% url 'game-create' 64 %}">game-create</a> ---
       {% else %}
          <a href="{% url 'login' %}">Log In</a> ---
          <a href="{% url 'signup' %}">Sign Up</a> ---
@@ -25,12 +39,13 @@
       <hr>
       {% endblock %}
       {% block content %}
-      <!-- main block -->
+      <div id="content-block">
+         <!-- main block -->
+      </div>
       <hr>
       {% endblock %}
       {% block footer %} 
       <hr>
-      <p>Footer goes here</p>
       {% endblock %}
    </body>
 </html>

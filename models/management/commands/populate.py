@@ -12,8 +12,8 @@
 import os
 
 from django.core.management.base import BaseCommand
-from models.models import User as User
 from models.models import Questionnaire as Questionnaire
+from models.models import User as User
 from models.models import Question as Question
 from models.models import Answer as Answer
 from models.models import Game as Game

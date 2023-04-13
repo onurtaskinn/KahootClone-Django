@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from services import views
 
 
 
@@ -23,4 +24,22 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('models.urls')),
     path('services/', include('services.urls')),
+
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # path('gamejoin/<int:publicId>/', views.GameJoinView.as_view(), name='game_join'),
+    # path('gamepage/<int:game_id>/', views.GamePageView.as_view(), name='game_page'),
