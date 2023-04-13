@@ -528,3 +528,57 @@ class GamePlayView(View):
             'leaderboard' : leaderboard
         })
         return context
+    
+
+
+from django.shortcuts import render, redirect
+from django.views import View
+from .forms import ParticipantForm
+
+class CreateParticipantView(View):
+    template_name = 'servicesTemplates/create_participant.html'
+
+    def get(self, request, *args, **kwargs):
+        public_id = self.kwargs.get('public_id')
+        game = Game.objects.filter(publicId=public_id).first()
+        
+
+        form = ParticipantForm()
+        context = {
+            'form': form,
+            'public_id': public_id,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        public_id = self.kwargs.get('public_id')
+        game = Game.objects.filter(publicId=public_id).first()
+
+
+        form = ParticipantForm(request.POST)
+        if form.is_valid():
+            participant = form.save(commit=False)
+            participant.game = game
+            participant.save()
+            request.session['participant_alias'] = participant.alias
+
+            # Redirect to the game page
+            return redirect('game-play', public_id=public_id)
+
+    
+    
+    
+    
+    # views.py
+from django.http import JsonResponse
+
+from django.http import JsonResponse
+
+class GetGameStateView(View):
+    def get(self, request, public_id):
+        game = Game.objects.filter(publicId=public_id).first()
+        data = {
+            'game_state': game.state,
+        }
+        return JsonResponse(data)
+

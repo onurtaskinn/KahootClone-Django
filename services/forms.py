@@ -16,4 +16,15 @@ class GameForm(forms.ModelForm):
         model = Game
         fields = ['state']
         
+from django import forms
+
+class ParticipantForm(forms.ModelForm):
+    class Meta:
+        model = Participant
+        fields = ['alias']
+        widgets = {
+            'user': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        
+
         

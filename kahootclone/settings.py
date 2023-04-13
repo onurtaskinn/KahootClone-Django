@@ -49,15 +49,6 @@ print(DEBUG)
     
 ALLOWED_HOSTS = [ ' localhost ' , '127.0.0.1' , 'my-third-assignment.onrender.com']    
 
-# RENDER_EXTERNAL_HOSTNAME= os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-# if RENDER_EXTERNAL_HOSTNAME:
-#     ALLOWED_HOSTS. append (RENDER_EXTERNAL_HOSTNAME)
-
-#DEBUG = False
-
-
-#ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS','').split(' ')
-
 ### ADDED CODES ###
 
 
@@ -72,20 +63,6 @@ LOGOUT_REDIRECT_URL = 'home'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-
-# SECRET_KEY = 'django-insecure-=scg@%b=&-9gz7j9xjz^n#4*a^438#1vi47sw(qt#&09=#-t6k'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-
-
-
-#DEBUG = False
-
-#ALLOWED_HOSTS = ['127.0.0.1']
 
 
 
@@ -140,7 +117,6 @@ WSGI_APPLICATION = 'kahootclone.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {}
-
 import os
 import dj_database_url
 
@@ -153,11 +129,13 @@ if 'TESTING' in os.environ:
             'USER': 'alumnodb',
             'PASSWORD': 'alumnodb',
             'HOST': 'localhost',
-            'PORT': '',
+            'PORT': '', 
         }
     }
 else:
     print("neon")
+    # db_from_env= dj_database_url.config(default='postgres://onurtaskinn:1uNZak3IegFf@ep-winter-dust-581083.eu-central-1.aws.neon.tech/neondb',
+    #                                     conn_max_age=500)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -168,10 +146,13 @@ else:
             'PORT': os.getenv('DATABASE_PORT'),
         }
     }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+    
+    
+    
+## below is the connection string of the neon database, however I could not manage to use it, I used directly the code 
+## upward code.
+    
+## postgres://onurtaskinn:1uNZak3IegFf@ep-winter-dust-581083.eu-central-1.aws.neon.tech/neondb
 
 AUTH_PASSWORD_VALIDATORS = [
     {

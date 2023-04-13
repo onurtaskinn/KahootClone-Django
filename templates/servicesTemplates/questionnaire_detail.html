@@ -8,6 +8,8 @@
     {% endfor %}
     </ul>
     <a href="{% url 'question-create' questionnaire.id %}">Add Question to this Questionnaire</a> ----    
-    <a href="{% url 'questionnaire-update' questionnaire.id %}">Edit Questionnaire</a>
+    <a href="{% url 'questionnaire-update' questionnaire.id %}">Edit Questionnaire</a> ----
+    <a href="{% url 'game-create' questionnaire.id %}">Create Game with this Questionnaire</a>
+
 
 {% endblock %}

@@ -5,19 +5,21 @@
 {% if error_message %}<p>{{ error_message }}</p>{% endif %}
 
 
-<p>Questionnaire ID: {{ game.questionnaire.id }}</p>
-<p>Game ID: {{ game.id }}</p>
-<p>Game state: {{ game.state }}</p>
-
 <h1>Game {{ game.publicId }} Created</h1>
-<p>Questionnaire Title: {{ game.questionnaire.title }}</p>
+<h3>Questionnaire Title: {{ game.questionnaire.title }}</h3>
 
 <div id="participants-container">
   {% include "servicesTemplates/participants_list.html" %}
 </div>
 
-<a href="{% url 'game-count-down' %}"> CountDown- </a>
+<h1> You can join the game using the following link : </h1>
+<h3> https://my-third-assignment.onrender.com/services/game/createparticipant/{{ game.publicId }} </h3>
 
+
+
+<div style="text-align: center;">
+  <a href="{% url 'game-count-down' %}" style="font-size: 36px;">START THE GAME</a>
+</div>
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
 <script>

@@ -12,32 +12,67 @@
    </head>
    <body>
       {% block header %} 
-      <a href="{% url 'home' %}" class="my-link">Homepage</a><br><br>
-      <hr>
+      <a href="{% url 'home' %}" class="kahootclone">KahootClone</a> 
+
+      {% if user.is_authenticated %}
+         <a href="{% url 'logout' %}" class="login-logout">Log Out</a>
+         <a href="#" class="my-link-2"> About</a> 
+         <p>Username : {{user.username}}<p>
+         <a href="{% url 'questionnaire-list' %}" class="login-logout">questionnaire-list</a>
+         <a href="{% url 'questionnaire-create' %}" class="login-logout">questionnaire-create</a> 
+      {% else %}
+         <a href="{% url 'login' %}" class="login-logout">Log In</a>
+         <a href="{% url 'signup' %}" class="login-logout"> Sign Up</a>
+         <a href="#" class="login-logout"> About</a> 
+         <br><br><br><br>
+         <p class="slogan center">
+            Kahoot Clone, the 100% engagement platform
+         </p>
+         <br><br>
+
+         <p class="description">Find and create free gamified quizzes and interactive lessons to engage any learner.
+            Our game­ based learning platform produces user-generated multiple-choice quizzes
+             that can be accessed via a web browser.You may use this platform to review students'
+              knowledge, for formative assessment, or as a break from traditional classroom activities.
+         </p>
+         <br><br>
+
+      {% endif %}
       {% endblock %}
-      {% block menu %}
 
       <style>
-         .my-link {
-            color: rgb(98, 16, 220);
-            font-size: 40px; /* Change the font size of links with class="my-link" */
+         .center {
+            margin: 0 auto;
+            width: 600px;
+         }
+
+         .kahootclone {
+            color: rgb(255, 255, 255);
+            font-size: 50px; /* Change the font size of links with class="my-link" */
             font-family: Arial, sans-serif;
-            background-color: rgb(255, 255, 255);
+            background-color: rgb(159, 62, 179);
+            margin-right: 900px;
+         }
+
+         .login-logout {
+            margin-right: 10px;
+         }
+         
+         .slogan {
+            color: rgb(55, 79, 237);
+            font-size: 30px; /* Change the font size of links with class="my-link" */
+
+         }
+         .description {
+            font-size: 20px; /* Change the font size of links with class="my-link" */
+            width : 800px;
+            margin: 0 auto;
+
          }
      </style>
      
-      {% if user.is_authenticated %}
-         <h3>Username : {{user.username}}</h3>
-         <a href="{% url 'logout' %}">Log Out</a> ---
-         <a href="{% url 'questionnaire-list' %}">questionnaire-list</a> ---
-         <a href="{% url 'questionnaire-create' %}">questionnaire-create</a> ---
-      {% else %}
-         <a href="{% url 'login' %}">Log In</a> ---
-         <a href="{% url 'signup' %}">Sign Up</a> ---
-      {% endif %}
-      <a href="#"> Cart</a>
-      <hr>
-      {% endblock %}
+
+
       {% block content %}
       <div id="content-block">
          <!-- main block -->

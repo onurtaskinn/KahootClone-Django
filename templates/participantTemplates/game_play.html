@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% else %}
+        {% if game_state == "WAITING" %}
+            {% include 'participantTemplates/waiting_p.html' %}
+        {% elif game_state == "QUESTION" and question_no == 1 %}       
+            {% include 'participantTemplates/countdown_p.html' %}
+        {% elif game_state == "ANSWER" %}
+            {% include 'participantTemplates/question_p.html' %}
+        {% elif game_state == "QUESTION" %}       
+            {% include 'participantTemplates/score_p.html' %}
+        {% elif game_state == "LEADERBOARD" %}
+            {% include 'participantTemplates/score_p.html' %}
+        {% elif game_state == "FINISHED" %}        
+            {% include 'participantTemplates/leaderboard_p.html' %}  
+        {% endif %}
+    {% endif %}
+
+    {% block extra_js %}
+        {% if game_state == "WAITING" or game_state == "COUNTDOWN" or game_state == "QUESTION" or game_state == "LEADERBOARD" %}
+            <script>
+                function updateGameState() {
+                    fetch('/services/game/state/{{ public_id }}/')
+                        .then(response => response.json())
+                        .then(data => {
+                            const currentGameState = "{{ game_state }}";
+                            if (data.game_state !== currentGameState) {
+                                // Reload the page if the game state has changed
+                                location.reload();
+                            }
+                        })
+                        .catch(error => console.error('Error fetching game state:', error));
+                }
+
+                // Fetch the game state every 5 seconds
+                setInterval(updateGameState, 2000);
+            </script>
+        {% endif %}
+    {% endblock %}
+{% endblock %}

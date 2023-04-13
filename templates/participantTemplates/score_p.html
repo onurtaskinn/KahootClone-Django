@@ -1,0 +1,17 @@
+<div class="container">
+    <h1 class="text-center">Current Score : {{ participant.points}}</h1>
+
+    <h2>Question : {{ previous_question }} </h2>
+
+    {% for answer in previous_question.answer_set.all %}
+    <div>
+        {% if answer.correct %}
+        <input type="radio" name="answer" value="{{ answer.id }}" id="answer_{{ answer.id }}" required checked>
+        <label for="answer_{{ answer.id }}" class="correct-answer">{{ answer }}</label>
+        {% else %}
+        <input type="radio" name="answer" value="{{ answer.id }}" id="answer_{{ answer.id }}" required>
+        <label for="answer_{{ answer.id }}">{{ answer }}</label>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>

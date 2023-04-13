@@ -21,7 +21,9 @@ urlpatterns = [
     path('gamecreate/<int:questionnaireid>/', views.GameCreateView.as_view(), name='game-create'),
     re_path(r'^services/gameUpdateParticipant/(?P<public_id>[0-9]+)?/$', views.GameUpdateParticipantView.as_view(), name='game-updateparticipant'),
     path('game-count-down/', views.GameCountdownView.as_view(), name='game-count-down'),
+    path('game/createparticipant/<str:public_id>/', views.CreateParticipantView.as_view(), name='participant-create'),
     path('game/play/<int:public_id>/', views.GamePlayView.as_view(), name='game-play'),
+    path('game/state/<str:public_id>/', views.GetGameStateView.as_view(), name='game-state'),
     
 
     ]

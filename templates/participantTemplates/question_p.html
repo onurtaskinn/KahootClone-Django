@@ -1,0 +1,82 @@
+<div class="container">
+    <h2>Question : {{ question }} </h2>
+
+    <form id="answer-form" method="post">
+        {% csrf_token %}
+            {% for answer in question.answer_set.all %}
+            <div>
+                <input type="radio" name="answer" value="{{ answer.id }}" id="answer_{{ answer.id }}" required>
+                <label for="answer_{{ answer.id }}">{{ answer }}</label>
+            </div>
+            {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+    <div class="container">
+        <h2>Countdown</h2>
+        <div id="countdown-timer">
+            <span id="timer">5</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let countdown = document.getElementById("timer");
+    let countdownValue = parseInt(countdown.textContent);
+    let countdownInterval = setInterval(() => {
+        countdownValue -= 1;
+        countdown.textContent = countdownValue;
+        if (countdownValue <= 0) {
+                clearInterval(countdownInterval);
+                updateGameState();
+                setTimeout(2000)
+                setInterval(updateGameState, 2000);
+        }
+    }, 1000);
+
+    function updateGameState() {
+        fetch('/services/game/state/{{ public_id }}/')
+            .then(response => response.json())
+            .then(data => {
+                const currentGameState = "{{ game_state }}";
+                if (data.game_state !== currentGameState) {
+                    // Reload the page if the game state has changed
+                    window.location.href = "/services/game/play/{{ public_id }}/";
+                }
+            })
+            .catch(error => console.error('Error fetching game state:', error));
+    }
+
+    const answerForm = document.getElementById("answer-form");
+    answerForm.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Collect form data
+        const formData = new FormData(event.target);
+
+        // Submit the form data using AJAX
+        fetch(window.location.pathname, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({
+                "selected_answer_id": formData.get("answer"),
+            }),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    // Update the UI or perform other actions based on a successful form submission
+                } else {
+                    console.error("Error submitting the form:", response);
+                }
+            })
+            .catch((error) => console.error("Error submitting the form:", error));
+
+        const selected_answer_id = formData.get("answer");
+        console.log("Selected answer ID:", selected_answer_id);
+
+        event.target.querySelector('button[type="submit"]').disabled = true;
+
+    });
+</script>

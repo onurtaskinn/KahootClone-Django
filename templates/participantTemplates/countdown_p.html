@@ -1,0 +1,39 @@
+
+<div class="container">
+        <h2>Countdown</h2>
+        <div id="countdown-timer">
+            <span id="timer">5</span>
+        </div>
+    </div>
+
+<script>
+        let countdown = document.getElementById("timer");
+        let countdownValue = parseInt(countdown.textContent);
+        let countdownInterval = setInterval(() => {
+            countdownValue -= 1;
+            countdown.textContent = countdownValue;
+
+            if (countdownValue <= 0) {
+                    clearInterval(countdownInterval);
+                    updateGameState();
+                    setTimeout(2000)
+                    setInterval(updateGameState, 2000);
+            }
+        }, 1000);
+</script>
+
+
+<script>
+    function updateGameState() {
+        fetch('/services/game/state/{{ public_id }}/')
+            .then(response => response.json())
+            .then(data => {
+                const currentGameState = "{{ game_state }}";
+                if (data.game_state !== currentGameState) {
+                    // Reload the page if the game state has changed
+                    window.location.href = "/services/game/play/{{ public_id }}/";
+                }
+            })
+            .catch(error => console.error('Error fetching game state:', error));
+    }
+</script>
