@@ -457,3 +457,74 @@ class GameCountdownView(View):
         #return redirect('/')  # Replace with an appropriate redirect URL in case of any issues
         
         
+
+
+
+# views.py
+import json
+from django.views.generic import TemplateView
+from models.constants import WAITING, COUNTDOWN, QUESTION, SCORE, LEADERBOARD
+
+class GamePlayView(View):
+    template_name = 'participantTemplates/game_play.html'
+    
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return render(request, 'participantTemplates/game_play.html', context)
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        public_id = context['public_id']
+        participant_alias = context['participant_alias']
+        game = Game.objects.filter(publicId=public_id).first()
+        participant = Participant.objects.filter(game=game, alias=participant_alias).first()
+
+        data = json.loads(request.body)
+        selected_answer_id = data.get('selected_answer_id')
+
+        selected_answer = Answer.objects.get(id=selected_answer_id)
+        if(selected_answer.correct):
+            participant.points += 10
+
+        participant.save()
+        
+        return JsonResponse({'success': True})
+
+    
+    def get_context_data(self,**kwargs):
+        
+        context = {}  # Create an empty context dictionary directly
+        participant_alias = self.request.session.get('participant_alias')
+        public_id = self.kwargs.get('public_id')
+        
+        self.request.session['participant_alias'] = participant_alias
+        self.request.session['public_id'] = public_id 
+        
+        
+        game = Game.objects.filter(publicId=public_id).first()
+        participant = Participant.objects.filter(game = game , alias = participant_alias).first()
+        numberOfQuestions = game.questionnaire.question_set.count()
+        print("question no : ",game.questionNo)
+        print("number of questions :" , numberOfQuestions)
+        if(game.questionNo-1 >= 1):
+            previous_question = Question.objects.filter(questionnaire = game.questionnaire)[game.questionNo-2]   
+            context['previous_question'] = previous_question 
+        
+        if(numberOfQuestions>= game.questionNo):
+            print("after")
+            question = Question.objects.filter(questionnaire = game.questionnaire)[game.questionNo-1]       
+            context['question'] = question     
+            
+        
+        leaderboard = Participant.objects.filter(game=game).order_by('-points')
+        context.update({
+            'participant_alias': participant_alias,
+            'public_id': public_id,
+            'game_state': game.state,
+            'game' : game,
+            'question_no' : game.questionNo,
+            'participant' : participant,
+            'participants': game.participants.all(),
+            'leaderboard' : leaderboard
+        })
+        return context

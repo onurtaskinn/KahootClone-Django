@@ -16,5 +16,4 @@ class GameForm(forms.ModelForm):
         model = Game
         fields = ['state']
         
-
         
