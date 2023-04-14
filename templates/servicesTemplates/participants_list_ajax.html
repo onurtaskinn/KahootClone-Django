@@ -1,6 +1,12 @@
-<h1>Participants list:</h1>
-<ul>
-  {% for participant in participants %}
-    <li>{{ participant.alias }}</li>
-  {% endfor %}
-</ul>
+<!-- 
+This template is not extended from base.html because this template is included in 
+another template which is extended from base.html -->
+
+<div id="participants_list" class="mt-4">
+  <h2>Participants list:</h2>
+  <ul class="list-group">
+    {% for participant in participants %}
+      <li class="list-group-item">{{ participant.alias }}</li>
+    {% endfor %}
+  </ul>
+</div>

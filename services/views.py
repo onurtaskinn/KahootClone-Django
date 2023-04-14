@@ -1,26 +1,23 @@
-from urllib import response
-from django.http import HttpResponse, HttpResponseNotFound
-from django.views.generic import ListView
-from models.constants import FINISHED, WAITING
-from models.models import Questionnaire
-from django.views.generic import DetailView
-from django.views.generic import DeleteView
-from django.urls import reverse, reverse_lazy
-from django.views.generic import UpdateView
-from django.views.generic import CreateView
-from models.models import Question
-from .forms import GameForm, QuestionForm
-from models.models import Answer
-from .forms import AnswerForm
-from models.models import Game
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import View
-from models.models import Participant
-from django.views.generic import TemplateView
-from django.shortcuts import render
+import json
 
-from rest_framework import serializers
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views import View
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
+
+from models.constants import ANSWER, LEADERBOARD, QUESTION, WAITING, FINISHED
+from models.models import Answer, Game, Participant, Question, Questionnaire
+from .forms import AnswerForm, GameForm, ParticipantForm, QuestionForm
+
 
 
 
@@ -68,11 +65,7 @@ class QuestionnaireListView(LoginRequiredMixin,ListView):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return Questionnaire.objects.filter(user=self.request.user).order_by('-updated_at')
-        # else:
-        #     return Questionnaire.objects.none()  
-            
-        
+            return Questionnaire.objects.filter(user=self.request.user).order_by('-updated_at')        
         
 
 
@@ -84,9 +77,6 @@ class QuestionnaireRemoveView(LoginRequiredMixin,DeleteView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Questionnaire.objects.filter(user=self.request.user)
-        # else:
-        #     return Questionnaire.objects.none()
-
         
         
 
@@ -100,8 +90,6 @@ class QuestionnaireUpdateView(LoginRequiredMixin,UpdateView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Questionnaire.objects.filter(user=self.request.user)
-        # else:
-        #     return Questionnaire.objects.none()
 
 
 
@@ -129,8 +117,6 @@ class QuestionDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Question.objects.filter(questionnaire__user=self.request.user)
-        # else:
-        #     return Question.objects.none()
         
 
 class QuestionRemoveView(LoginRequiredMixin,DeleteView):
@@ -140,8 +126,7 @@ class QuestionRemoveView(LoginRequiredMixin,DeleteView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Question.objects.filter(questionnaire__user=self.request.user)
-        # else:
-        #     return Question.objects.none()
+
         
     def get_success_url(self):
         return reverse('questionnaire-detail', kwargs={'pk': self.object.questionnaire.pk})    
@@ -154,19 +139,10 @@ class QuestionCreateView(LoginRequiredMixin,CreateView):
     template_name = 'servicesTemplates/question_create.html'
 
     def form_valid(self, form):
-        #print("form valid")
         form.instance.questionnaire = Questionnaire.objects.get(pk=self.kwargs['questionnaireid'])
         return super().form_valid(form)
-
-    # def get_queryset(self):
-    #     print("get queryset")        
-    #     if self.request.user.is_authenticated:
-    #         return Question.objects.filter(questionnaire__user=self.request.user)
-    #     else:
-    #         return Question.objects.none()
     
-    def get_success_url(self):
-        #print("get success url")        
+    def get_success_url(self):      
         return reverse('questionnaire-detail', kwargs={'pk': self.object.questionnaire.pk})     
     
        
@@ -196,12 +172,6 @@ class AnswerCreateView(LoginRequiredMixin,CreateView):
         form.instance.question = Question.objects.get(pk=self.kwargs['questionid'])
         return super().form_valid(form)
 
-    # def get_queryset(self):
-    #     if self.request.user.is_authenticated:
-    #         return Answer.objects.filter(question__questionnaire__user=self.request.user)
-    #     else:
-    #         return Answer.objects.none()
-    
     def get_success_url(self):
         return reverse('question-detail', kwargs={'pk': self.object.question.pk})        
 
@@ -226,8 +196,6 @@ class AnswerUpdateView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Answer.objects
-        # else:
-        #     return Answer.objects.none()
 
     def form_valid(self, form):
         answer = Answer.objects.get(pk=self.kwargs['pk'])
@@ -283,11 +251,12 @@ class GameUpdateParticipantView(TemplateView):
     participants_template = 'servicesTemplates/participants_list_ajax.html'
 
     def get(self, request, *args, **kwargs):
-        public_id = self.kwargs.get('public_id') or self.request.session.get('game_public_id')
+        public_id = (
+            self.kwargs.get('public_id') or self.request.session.get('game_public_id')
+        )
         game = Game.objects.filter(publicId=public_id).first()
-        
-        #request.session['game'] = game
-        if(game):
+
+        if game:
             request.session['game_public_id'] = game.publicId
 
         if not game or game.questionnaire.user != request.user:
@@ -300,16 +269,8 @@ class GameUpdateParticipantView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # if not self.request.user.is_authenticated:
-        #     return {'error_message': 'does not belong to logged user'}
 
         game = kwargs.get('game')
-
-        # if not game:
-        #     return {'error_message': 'game not found'}
-        # if game.questionnaire.user != self.request.user:
-        #     return {'error_message': 'This game does not belong to the logged user'}
-
         context.update({
             'public_id': kwargs.get('public_id'),
             'questionarie': game.questionnaire,
@@ -324,41 +285,34 @@ class GameUpdateParticipantView(TemplateView):
     
     
     
-from django.shortcuts import render, redirect
-from django.views import View
-from django.urls import reverse
-from models.constants import WAITING, QUESTION, ANSWER, LEADERBOARD
-from models.models import Game, Question, Participant
+
 
 
 class GameCountdownView(View):
     def get_context_data(self, game_state, game):
-        public_id = self.kwargs.get('public_id') or self.request.session.get('game_public_id')
+        public_id = (
+            self.kwargs.get('public_id') or self.request.session.get('game_public_id')
+        )
         game = Game.objects.filter(publicId=public_id).first()
         numberOfQuestions = game.questionnaire.question_set.count()
         if game_state == WAITING:
-            #print("get_contex_data WAITING")
             return {}
+        
         elif game_state == QUESTION:
-            #print("get_contex_data QUESTION")
+
             if(numberOfQuestions >= game.questionNo):
                 question = Question.objects.filter(questionnaire = game.questionnaire)[game.questionNo-1]
                 return {'question': question}
         elif game_state == ANSWER:
-            #print("get_contex_data ANSWER")
-            # Get the score, you may need to modify this based on your implementation
             points = Participant.objects.get(alias=self.request.user, game=game).points
             return {'score': points}
         elif game_state == "LEADERBOARD":
-            #print("get_contex_data LEADERBOARD")
-            points = Participant.objects.get(alias=self.request.user, game=game).points
+            points = (
+                Participant.objects.get(alias=self.request.user, game=game).points
+            )
             leaderboard = Participant.objects.filter(game=game).order_by('-points')
             return {'leaderboard': leaderboard}
-        # elif game_state == "FINISHED":
-        #     #print("get_contex_data LEADERBOARD")
-        #     points = Participant.objects.get(alias=self.request.user, game=game).points
-        #     leaderboard = Participant.objects.filter(game=game).order_by('-points')
-        #     return {'leaderboard': leaderboard,}
+
     
     def get(self, request, *args, **kwargs):
         public_id = self.request.session.get('game_public_id') or self.kwargs.get('public_id') #or self.request.session.get('public_id')
@@ -369,36 +323,23 @@ class GameCountdownView(View):
         
         
         if game.state == WAITING:
-            #print("WAITING _ GET")
             context = self.get_context_data(game.state, game)    
             request.session['game_state'] = QUESTION
-            #request.session['first'] = "true"
             game.state = QUESTION
             game.save()
             return render(request, 'countdownTemplatesForUser/countdown.html',context)
 
         current_state = request.session.get('game_state', None)
         
-        # if game.state == COUNTDOWN:
-        #     context = self.get_context_data(game.state, game)              
-        #     print("COUNTDOWN state")
-        #     request.session['game_state'] = QUESTION
-        #     game.state = QUESTION
-        #     game.save()
-        #     print("if : countdown, state: question ")                  
-        #     return render(request, 'countdownTemplatesForUser/countdown.html',context)
 
         if current_state == QUESTION:
-            #print("QUESTION_ GET")
             context = self.get_context_data(game.state, game)   
-            #question = Question.objects.first()  # Replace with the appropriate question retrieval method
             request.session['game_state'] = ANSWER
             game.state = ANSWER
             game.save()
             return render(request, 'countdownTemplatesForUser/question.html', context)
 
         if current_state == ANSWER:
-            #print("ANSWER _ GET")
             context = self.get_context_data(game.state, game)                                    
             request.session['game_state'] = QUESTION if not numberOfQuestions==game.questionNo else LEADERBOARD
             game.questionNo += 1
@@ -408,19 +349,16 @@ class GameCountdownView(View):
 
 
         if current_state == LEADERBOARD:
-            #print("LEADERBOARD _ GET")
             request.session['game_state'] = FINISHED
             context = self.get_context_data(game.state, game)                        
             game.state = FINISHED
             game.save()
-            leaderboard = []              # Replace with the actual leaderboard calculation logic
             return render(request, 'countdownTemplatesForUser/leaderboard.html', context)
 
         return redirect('/')  # Replace with an appropriate redirect URL in case of any issues
     
     
     def post(self, request, *args, **kwargs):
-        #print("POST")
         public_id = self.kwargs.get('public_id') or self.request.session.get('game_public_id')
         current_state = request.session.get('game_state', None)
         game = Game.objects.filter(publicId=public_id).first()
@@ -429,7 +367,6 @@ class GameCountdownView(View):
         if current_state == ANSWER:
             # Get the selected answer from the form data
             answer_id = request.POST.get('answer', None)
-            #print("answer id : ", answer_id)
             
             if answer_id:
                 # Get the answer object from the database
@@ -437,7 +374,6 @@ class GameCountdownView(View):
                 if selected_answer:
                     # Compare the selected answer with the correct answer and update the score
                     is_correct = selected_answer.correct
-                    #print(Participant.objects.all())
                     participant = Participant.objects.get(alias=self.request.user, game=game)
                     if is_correct:
                         participant.points += 10
@@ -453,17 +389,13 @@ class GameCountdownView(View):
             return redirect('game-count-down')
         elif request.session['game_state'] == LEADERBOARD:
             return redirect('game-count-down')
-
-        #return redirect('/')  # Replace with an appropriate redirect URL in case of any issues
         
         
 
 
 
 # views.py
-import json
-from django.views.generic import TemplateView
-from models.constants import WAITING, COUNTDOWN, QUESTION, SCORE, LEADERBOARD
+
 
 class GamePlayView(View):
     template_name = 'participantTemplates/game_play.html'
@@ -483,8 +415,11 @@ class GamePlayView(View):
         selected_answer_id = data.get('selected_answer_id')
 
         selected_answer = Answer.objects.get(id=selected_answer_id)
-        if(selected_answer.correct):
+        if selected_answer.correct:
             participant.points += 10
+            request.session['previous_answer_correct'] = True
+        else:
+            request.session['previous_answer_correct'] = False
 
         participant.save()
         
@@ -493,25 +428,28 @@ class GamePlayView(View):
     
     def get_context_data(self,**kwargs):
         
-        context = {}  # Create an empty context dictionary directly
+        context = {}
+        
+        previous_answer_correct = self.request.session.get('previous_answer_correct', None)
+        context['previous_answer_correct'] = previous_answer_correct
+        
         participant_alias = self.request.session.get('participant_alias')
         public_id = self.kwargs.get('public_id')
-        
+
         self.request.session['participant_alias'] = participant_alias
-        self.request.session['public_id'] = public_id 
-        
-        
+        self.request.session['public_id'] = public_id
+
         game = Game.objects.filter(publicId=public_id).first()
-        participant = Participant.objects.filter(game = game , alias = participant_alias).first()
+        participant = (
+            Participant.objects.filter(game=game, alias=participant_alias).first()
+        )
         numberOfQuestions = game.questionnaire.question_set.count()
-        print("question no : ",game.questionNo)
-        print("number of questions :" , numberOfQuestions)
+        
         if(game.questionNo-1 >= 1):
             previous_question = Question.objects.filter(questionnaire = game.questionnaire)[game.questionNo-2]   
             context['previous_question'] = previous_question 
         
         if(numberOfQuestions>= game.questionNo):
-            print("after")
             question = Question.objects.filter(questionnaire = game.questionnaire)[game.questionNo-1]       
             context['question'] = question     
             
@@ -531,9 +469,6 @@ class GamePlayView(View):
     
 
 
-from django.shortcuts import render, redirect
-from django.views import View
-from .forms import ParticipantForm
 
 class CreateParticipantView(View):
     template_name = 'servicesTemplates/create_participant.html'
@@ -570,9 +505,6 @@ class CreateParticipantView(View):
     
     
     # views.py
-from django.http import JsonResponse
-
-from django.http import JsonResponse
 
 class GetGameStateView(View):
     def get(self, request, public_id):

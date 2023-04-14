@@ -1,0 +1,29 @@
+Name                                Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------
+models/__init__.py                      0      0   100%
+models/admin.py                        21      0   100%
+models/apps.py                          4      0   100%
+models/constants.py                     7      0   100%
+models/forms.py                         9      0   100%
+models/migrations/0001_initial.py      11      0   100%
+models/migrations/__init__.py           0      0   100%
+models/models.py                       69      0   100%
+models/urls.py                          5      0   100%
+models/views.py                        19      0   100%
+-----------------------------------------------------------------
+TOTAL                                 145      0   100%
+
+
+Name                   Stmts   Miss  Cover   Missing
+----------------------------------------------------
+services/__init__.py       0      0   100%
+services/admin.py          1      0   100%
+services/apps.py           4      0   100%
+services/forms.py         20      0   100%
+services/models.py         1      0   100%
+services/urls.py           3      0   100%
+services/views.py        287      1    99%   422
+----------------------------------------------------
+TOTAL                    316      1    99%
+
+

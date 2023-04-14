@@ -1,22 +1,26 @@
-    <div class="container">
-        <h2>Leaderboard</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for participant in leaderboard %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ participant.alias }}</td>
-                        <td>{{ participant.points }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <!-- 
+This template is not extended from base.html because this template is included in 
+another template which is extended from base.html -->
 
+
+<div class="container">
+    <h2 class="text-center">Leaderboard</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Username</th>
+                <th scope="col">Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for participant in leaderboard %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ participant.alias }}</td>
+                    <td>{{ participant.points }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

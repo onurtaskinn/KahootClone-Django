@@ -4,40 +4,41 @@
 
 {% if error_message %}<p>{{ error_message }}</p>{% endif %}
 
-
-<h1>Game {{ game.publicId }} Created</h1>
-<h3>Questionnaire Title: {{ game.questionnaire.title }}</h3>
-
-<div id="participants-container">
-  {% include "servicesTemplates/participants_list.html" %}
+<div class="text-center">
+    <h1>Game {{ game.publicId }} Created</h1>
+    <h3>Questionnaire Title: {{ game.questionnaire.title }}</h3>
 </div>
 
-<h1> You can join the game using the following link : </h1>
-<h3> https://my-third-assignment.onrender.com/services/game/createparticipant/{{ game.publicId }} </h3>
-
-
-
-<div style="text-align: center;">
-  <a href="{% url 'game-count-down' %}" style="font-size: 36px;">START THE GAME</a>
+<div id="participants-container" class="mb-4">
+    {% include "servicesTemplates/participants_list.html" %}
 </div>
+
+<div class="text-center">
+    <h2> You can join the game using the following link: </h2>
+    <h4> https://thirdassignmentgroup16.onrender.com/services/game/createparticipant/{{ game.publicId }} </h4>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{% url 'game-count-down' %}" class="btn btn-primary btn-lg">START THE GAME</a>
+</div>
+
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-
 <script>
-  function refresh() {
-      let public_id = "{{ public_id }}";
-      let url = public_id ? "{% url 'game-updateparticipant' public_id=0 %}".replace('0', public_id) : '';
+    function refresh() {
+        let public_id = "{{ public_id }}";
+        let url = public_id ? "{% url 'game-updateparticipant' public_id=0 %}".replace('0', public_id) : '';
 
-      $.ajax({
-          url: url,
-          success: function(data) {
-              $('#participants-container').html(data);
-          }
-      });
-  }
-  
-  $(document).ready(function() {
-      setInterval(refresh, 2000); // Changed from setTimeout to setInterval
-  });
-  </script>
+        $.ajax({
+            url: url,
+            success: function(data) {
+                $('#participants-container').html(data);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        setInterval(refresh, 2000); // Changed from setTimeout to setInterval
+    });
+</script>
 
 {% endblock %}

@@ -47,7 +47,7 @@ else :
 print(DEBUG)    
     
     
-ALLOWED_HOSTS = [ ' localhost ' , '127.0.0.1' , 'my-third-assignment.onrender.com']    
+ALLOWED_HOSTS = [ ' localhost ' , '127.0.0.1' , 'thirdassignmentgroup16.onrender.com']    
 
 ### ADDED CODES ###
 

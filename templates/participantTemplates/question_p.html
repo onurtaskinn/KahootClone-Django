@@ -1,24 +1,31 @@
+<!-- 
+This template is not extended from base.html because this template is included in 
+another template which is extended from base.html -->
+
+
 <div class="container">
-    <h2>Question : {{ question }} </h2>
+    <h2 class="text-center">Question: {{ question }}</h2>
 
     <form id="answer-form" method="post">
         {% csrf_token %}
+        <div class="list-group mb-4">
             {% for answer in question.answer_set.all %}
-            <div>
-                <input type="radio" name="answer" value="{{ answer.id }}" id="answer_{{ answer.id }}" required>
-                <label for="answer_{{ answer.id }}">{{ answer }}</label>
-            </div>
+                <div class="list-group-item">
+                    <input class="form-check-input me-1" type="radio" name="answer" value="{{ answer.id }}" id="answer_{{ answer.id }}" required>
+                    <label class="form-check-label" for="answer_{{ answer.id }}">{{ answer }}</label>
+                </div>
             {% endfor %}
-        <button type="submit">Submit</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
-    <div class="container">
-        <h2>Countdown</h2>
-        <div id="countdown-timer">
-            <span id="timer">5</span>
+
+    <div class="container mt-4">
+        <h2 class="text-center">Countdown</h2>
+        <div id="countdown-timer" class="text-center">
+            <span id="timer" class="display-4">5</span>
         </div>
     </div>
 </div>
-
 <script>
     let countdown = document.getElementById("timer");
     let countdownValue = parseInt(countdown.textContent);

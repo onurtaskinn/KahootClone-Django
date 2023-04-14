@@ -1,89 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <style>
-         .correct-answer {
+<head>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>
+        {% block title %} Kahoot {% endblock %}
+    </title>
+    <style>
+        .correct-answer {
             color: red;
-         }
-      </style>
-      <title>
-         {% block title %} Kahoot {% endblock %}
-      </title>
-   </head>
-   <body>
-      {% block header %} 
-      <a href="{% url 'home' %}" class="kahootclone">KahootClone</a> 
+        }
+    </style>
+</head>
+<body>
+{% block header %}
+<header class="bg-primary text-white p-3 mb-3">
+    <div class="container">
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'home' %}" class="text-decoration-none text-white fs-2">KahootClone</a>
+            <nav>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="text-decoration-none text-white me-2">Log Out</a>
+                    <a href="#" class="text-decoration-none text-white me-2"> About</a>
+                    <p class="d-inline-block mb-0">Username : {{ user.username }}</p>
+                    <a href="{% url 'questionnaire-list' %}" class="text-decoration-none text-white ms-2">List of your questionnaires</a>
+                    <a href="{% url 'questionnaire-create' %}" class="text-decoration-none text-white ms-2">Create new questionnaire</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="text-decoration-none text-white me-2">Log In</a>
+                    <a href="{% url 'signup' %}" class="text-decoration-none text-white me-2"> Sign Up</a>
+                    <a href="#" class="text-decoration-none text-white"> About</a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</header>
+{% endblock %}
 
-      {% if user.is_authenticated %}
-         <a href="{% url 'logout' %}" class="login-logout">Log Out</a>
-         <a href="#" class="my-link-2"> About</a> 
-         <p>Username : {{user.username}}<p>
-         <a href="{% url 'questionnaire-list' %}" class="login-logout">questionnaire-list</a>
-         <a href="{% url 'questionnaire-create' %}" class="login-logout">questionnaire-create</a> 
-      {% else %}
-         <a href="{% url 'login' %}" class="login-logout">Log In</a>
-         <a href="{% url 'signup' %}" class="login-logout"> Sign Up</a>
-         <a href="#" class="login-logout"> About</a> 
-         <br><br><br><br>
-         <p class="slogan center">
-            Kahoot Clone, the 100% engagement platform
-         </p>
-         <br><br>
-
-         <p class="description">Find and create free gamified quizzes and interactive lessons to engage any learner.
+<main class="container">
+    {% if not user.is_authenticated %}
+    <section class="text-center mb-5">
+        <h2 class="text-primary mb-3">Kahoot Clone, the 100% engagement platform</h2>
+        <p>Find and create free gamified quizzes and interactive lessons to engage any learner.
             Our game­ based learning platform produces user-generated multiple-choice quizzes
-             that can be accessed via a web browser.You may use this platform to review students'
-              knowledge, for formative assessment, or as a break from traditional classroom activities.
-         </p>
-         <br><br>
+            that can be accessed via a web browser. You may use this platform to review students'
+            knowledge, for formative assessment, or as a break from traditional classroom activities.
+        </p>
+    </section>
+    {% endif %}
 
-      {% endif %}
-      {% endblock %}
+    {% block content %}
+    <div id="content-block">
+        <!-- main block -->
+    </div>
+    <hr>
+    {% endblock %}
+</main>
 
-      <style>
-         .center {
-            margin: 0 auto;
-            width: 600px;
-         }
+{% block footer %}
+<footer class="container">
+    <hr>
+</footer>
+{% endblock %}
 
-         .kahootclone {
-            color: rgb(255, 255, 255);
-            font-size: 50px; /* Change the font size of links with class="my-link" */
-            font-family: Arial, sans-serif;
-            background-color: rgb(159, 62, 179);
-            margin-right: 900px;
-         }
-
-         .login-logout {
-            margin-right: 10px;
-         }
-         
-         .slogan {
-            color: rgb(55, 79, 237);
-            font-size: 30px; /* Change the font size of links with class="my-link" */
-
-         }
-         .description {
-            font-size: 20px; /* Change the font size of links with class="my-link" */
-            width : 800px;
-            margin: 0 auto;
-
-         }
-     </style>
-     
-
-
-      {% block content %}
-      <div id="content-block">
-         <!-- main block -->
-      </div>
-      <hr>
-      {% endblock %}
-      {% block footer %} 
-      <hr>
-      {% endblock %}
-   </body>
+<!-- Add Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
 </html>
-<!-- Ejemplo de fichero base.html. 
-Esto es solo un ejemplo para empezar a trabajar, 
-se espera que lo modifiquéis tanto como sea necesario. --> 
