@@ -27,7 +27,7 @@ class Questionnaire(models.Model):
 class Question(models.Model):
     question = models.TextField()
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE)
-    answerTime = models.IntegerField(null=True)
+    answerTime = models.IntegerField(null=True, default=10)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
