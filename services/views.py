@@ -234,11 +234,6 @@ class GameCreateView(View):
         request.session['game_state'] = WAITING
         #request.session['game'] = game
         
-        participant = Participant.objects.create(game=game, alias = self.request.user , points = 10)
-        participant = Participant.objects.create(game=game, alias = "ozan" , points = 10)
-        participant = Participant.objects.create(game=game, alias = "mehmet" , points = 10)
-        participant = Participant.objects.create(game=game, alias = "gulen" , points = 10)
-        
 
         # Redirect to the detail view for the newly created game
         return redirect('game-updateparticipant', public_id=game.publicId)
@@ -303,13 +298,12 @@ class GameCountdownView(View):
             if(numberOfQuestions >= game.questionNo):
                 question = Question.objects.filter(questionnaire = game.questionnaire)[game.questionNo-1]
                 return {'question': question}
+            
         elif game_state == ANSWER:
-            points = Participant.objects.get(alias=self.request.user, game=game).points
-            return {'score': points}
+            leaderboard = Participant.objects.filter(game=game).order_by('-points')
+            return {'leaderboard': leaderboard}
+
         elif game_state == "LEADERBOARD":
-            points = (
-                Participant.objects.get(alias=self.request.user, game=game).points
-            )
             leaderboard = Participant.objects.filter(game=game).order_by('-points')
             return {'leaderboard': leaderboard}
 

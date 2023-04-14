@@ -4,16 +4,18 @@
     <div class="container">
         <h2>Question : {{ question }}        </h2>
 
-        {% for answer in question.answer_set.all %}
-        <div>
-            <input type="radio" name="answer" value="{{ answer.id }}" id="answer_{{ answer.id }}" required>
-            <label for="answer_{{ answer.id }}">{{ answer }}</label>
+        <div class="list-group mb-4">
+            {% for answer in question.answer_set.all %}
+                <div class="list-group-item">
+                    <input class="form-check-input me-1" type="radio" name="answer" value="{{ answer.id }}" id="answer_{{ answer.id }}" required>
+                    <label class="form-check-label" for="answer_{{ answer.id }}">{{ answer }}</label>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-        <div class="container">
-            <h2>Countdown</h2>
-            <div id="countdown-timer">
-                <span id="timer">{{ question.answerTime }}</span>
+        <div class="container mt-4">
+            <h2 class="text-center">Countdown</h2>
+            <div id="countdown-timer" class="text-center">
+                <span id="timer" class="display-4">{{ question.answerTime }}</span>
             </div>
         </div>
     </div>

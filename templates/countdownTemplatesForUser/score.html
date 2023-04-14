@@ -1,9 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
+
     <div class="container">
-        <h2>Score</h2>
-        <p>Your current score is: {{ score }}</p>
-        <a href="{% url 'game-count-down' %}">Next question</a>
+        <h2 class="text-center">Leaderboard</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in leaderboard %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ participant.alias }}</td>
+                        <td>{{ participant.points }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    <a href="{% url 'game-count-down' %}">Next question</a>
 {% endblock %}
