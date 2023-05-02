@@ -15,7 +15,7 @@ from django.views.generic import (
 )
 
 from models.constants import ANSWER, LEADERBOARD, QUESTION, WAITING, FINISHED
-from models.models import Answer, Game, Participant, Question, Questionnaire
+from models.models import Answer, Game, Participant, Question, Questionnaire, Guess
 from .forms import AnswerForm, GameForm, ParticipantForm, QuestionForm
 
 
@@ -234,6 +234,7 @@ class GameCreateView(View):
         request.session['game_state'] = WAITING
         #request.session['game'] = game
         
+        #participant = Participant.objects.create(game=game, alias = self.request.user , points = 10)
 
         # Redirect to the detail view for the newly created game
         return redirect('game-updateparticipant', public_id=game.publicId)
@@ -409,8 +410,12 @@ class GamePlayView(View):
         selected_answer_id = data.get('selected_answer_id')
 
         selected_answer = Answer.objects.get(id=selected_answer_id)
+        question = selected_answer.question
+        
+        guess =  Guess(participant=participant, game=game, question=question, answer=selected_answer)
+        guess.save()
+        
         if selected_answer.correct:
-            participant.points += 10
             request.session['previous_answer_correct'] = True
         else:
             request.session['previous_answer_correct'] = False

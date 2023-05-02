@@ -20,6 +20,13 @@ class Questionnaire(models.Model):
     class Meta:
         ordering = ['title']
 
+    def get_question_by_index(self, index):
+        try:
+            question = self.question_set.order_by('created_at')[index]
+        except IndexError:
+            question = None
+        return question        
+
 
     def __str__(self):
         return self.title
@@ -96,7 +103,7 @@ class Guess(models.Model):
     def save(self, *args, **kwargs):
         if self.pk is None:
             if self.answer.correct:
-                self.participant.points += 1
+                self.participant.points += 10
                 self.participant.save()
 
         super(Guess, self).save(*args, **kwargs)
