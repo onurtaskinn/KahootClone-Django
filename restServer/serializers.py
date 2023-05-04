@@ -25,10 +25,12 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class GameSerializer(serializers.ModelSerializer):
     current_question = serializers.SerializerMethodField()
+    total_questions = serializers.SerializerMethodField()  # Add this line
 
     class Meta:
         model = Game
-        fields = ['id', 'publicId', 'questionnaire', 'questionNo', 'state', 'countdownTime', 'created_at', 'current_question']
+        fields = ['id', 'publicId', 'questionnaire', 'total_questions', 'questionNo', 'state', 
+                  'countdownTime', 'created_at', 'current_question',] #
         
     def get_current_question(self, obj):
         questionnaire = obj.questionnaire
@@ -37,7 +39,10 @@ class GameSerializer(serializers.ModelSerializer):
             question = questions[obj.questionNo - 1]
             return QuestionSerializer(question).data
         return None
-
+    
+    def get_total_questions(self, obj):
+        questionnaire = obj.questionnaire
+        return questionnaire.question_count()
         
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

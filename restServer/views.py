@@ -167,6 +167,86 @@ class ParticipantListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
+
+
+        
+class GameDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+
+    
+    def get(self, request, publicId):
+        try:
+            game = Game.objects.get(publicId=publicId)
+        except Game.DoesNotExist:
+            return Response({"error": "Game not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = GameSerializer(game)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def delete(self, request, publicId):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def put(self, request, publicId):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+
+
+    
+
+
+    
+class ParticipantDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+    
+    
+    def get(self, request, pk):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+
+    def put(self, request, pk):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, pk):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class GuessDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, pk):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+
+    def put(self, request, pk):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+
+    def delete(self, request, pk):
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
+    
+    
+class QuestionDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+
+    
+    def get(self, request, id):
+        try:
+            question = Question.objects.get(id=id)
+        except Question.DoesNotExist:
+            return Response({"error": "Question not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = QuestionSerializer(question)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+
+class GameParticipantsDetailView(generics.GenericAPIView):
+    queryset = Participant.objects.all()
+    serializer_class = ParticipantSerializer
+
+    def get(self, request, publicId):
+        game = get_object_or_404(Game, publicId=publicId)
+        participants = Participant.objects.filter(game=game)
+        serializer = ParticipantSerializer(participants, many=True)
+        return Response(serializer.data)
     
 
 

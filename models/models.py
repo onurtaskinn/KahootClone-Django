@@ -26,6 +26,10 @@ class Questionnaire(models.Model):
         except IndexError:
             question = None
         return question        
+    
+    
+    def question_count(self):
+        return self.question_set.count()
 
 
     def __str__(self):
