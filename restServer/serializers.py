@@ -55,16 +55,20 @@ class ParticipantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Participant
         fields = '__all__'
-
+        
 class GuessSerializer(serializers.ModelSerializer):
     participant = serializers.PrimaryKeyRelatedField(queryset=Participant.objects.all(), write_only=True)
     game = serializers.SlugRelatedField(slug_field='publicId', queryset=Game.objects.all())
-    question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())  # Add this line
+    question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
+    answer = serializers.PrimaryKeyRelatedField(queryset=Answer.objects.all())
+    correct = serializers.SerializerMethodField()
 
     class Meta:
         model = Guess
-        fields = ['game', 'answer', 'participant', 'question']  
-        
+        fields = ['game', 'answer', 'participant', 'question', 'correct']
+
+    def get_correct(self, obj):
+        return obj.answer.correct        
 
  
         
