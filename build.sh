@@ -3,6 +3,7 @@
 set -o errexit  # exit on error
 
 pip install -r requirements.txt
+pip install django-cors-headers
 
 
 python manage.py collectstatic --no-input

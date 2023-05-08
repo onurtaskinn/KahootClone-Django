@@ -383,6 +383,7 @@ class ServiceTests(ServiceBaseTest):
         # print("RESPONSE", self.decode(response.content))
         # questionarie need to be reload,
         # that is, self.questionnarie has old values
+        print(Question.objects.all())
         question = Question.objects.get(id=id)
         self.assertEqual(question.question, kwargs["question"])
 

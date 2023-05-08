@@ -147,7 +147,6 @@ class Command(BaseCommand):
                     alias=alias
                 )
                 print(f"Created participant {participant.alias} in Game {game.publicId}")
-                
 
     def guess(self):
         print("Guess")
@@ -165,3 +164,4 @@ class Command(BaseCommand):
                     answer=chosen_answer
                 )
                 print(f"{participant.alias} in Game {game.publicId} guessed {guess.answer.answer}")
+

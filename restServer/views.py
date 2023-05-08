@@ -213,10 +213,7 @@ class GuessDetailView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, pk):
-        try:
-            guess = Guess.objects.get(pk=pk)
-        except Guess.DoesNotExist:
-            return Response({"error": "Guess not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)
 
     def put(self, request, pk):
         return Response({"error": "Authentication credentials were not provided."}, status=status.HTTP_403_FORBIDDEN)

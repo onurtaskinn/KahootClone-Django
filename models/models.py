@@ -34,6 +34,8 @@ class Questionnaire(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
 
 class Question(models.Model):
     question = models.TextField()
@@ -44,6 +46,7 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question
+    
 
 class Answer(models.Model):
     answer = models.TextField()
@@ -107,7 +110,7 @@ class Guess(models.Model):
     def save(self, *args, **kwargs):
         if self.pk is None:
             if self.answer.correct:
-                self.participant.points += 10
+                self.participant.points += 1
                 self.participant.save()
 
         super(Guess, self).save(*args, **kwargs)

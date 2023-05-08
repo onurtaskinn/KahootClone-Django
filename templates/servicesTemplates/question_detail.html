@@ -9,8 +9,10 @@
         <a href="{% url 'answer-update' answer.id %}">Update Answer</a></li> 
     {% endfor %}
   </ul>
-    <a href="{% url 'answer-create' question.id %}">Add Answer</a>
-    <a href="{% url 'question-update' question.id %}">Edit Question</a>
-    <a href="{% url 'question-remove' question.id %}">Delete Question</a>
+    <a href="{% url 'answer-create' question.id %}">Add Answer</a> ---
+    <a href="{% url 'question-update' question.id %}">Edit Question</a> ---
+    <a href="{% url 'question-remove' question.id %}">Delete Question</a> ---
+    <a href="{% url 'questionnaire-detail' question.questionnaire.id %}">Go Back to Questionaire</a>
+
 
 {% endblock %}

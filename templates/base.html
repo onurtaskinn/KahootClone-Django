@@ -7,6 +7,19 @@
         {% block title %} Kahoot {% endblock %}
     </title>
     <style>
+        .logo {
+            font-weight: bold;
+            font-size: 2rem;
+        }
+
+        .bg-primary-gradient {
+            background: linear-gradient(to right, #0d6efd, #1d8cf8);
+        }
+
+        .main-container {
+            min-height: calc(100vh - 7rem);
+        }
+
         .correct-answer {
             color: red;
         }
@@ -14,15 +27,14 @@
 </head>
 <body>
 {% block header %}
-<header class="bg-primary text-white p-3 mb-3">
+<header class="bg-primary-gradient text-white p-3 mb-3">
     <div class="container">
         <div class="d-flex justify-content-between">
-            <a href="{% url 'home' %}" class="text-decoration-none text-white fs-2">KahootClone</a>
+            <a href="{% url 'home' %}" class="text-decoration-none text-white logo">KahootClone</a>
             <nav>
                 {% if user.is_authenticated %}
+                    <p class="d-inline-block mb-0 me-2">Username : {{ user.username }}</p>
                     <a href="{% url 'logout' %}" class="text-decoration-none text-white me-2">Log Out</a>
-                    <a href="#" class="text-decoration-none text-white me-2"> About</a>
-                    <p class="d-inline-block mb-0">Username : {{ user.username }}</p>
                     <a href="{% url 'questionnaire-list' %}" class="text-decoration-none text-white ms-2">List of your questionnaires</a>
                     <a href="{% url 'questionnaire-create' %}" class="text-decoration-none text-white ms-2">Create new questionnaire</a>
                 {% else %}
@@ -36,7 +48,7 @@
 </header>
 {% endblock %}
 
-<main class="container">
+<main class="container main-container">
     {% if not user.is_authenticated %}
     <section class="text-center mb-5">
         <h2 class="text-primary mb-3">Kahoot Clone, the 100% engagement platform</h2>

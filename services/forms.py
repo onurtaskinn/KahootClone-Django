@@ -4,7 +4,7 @@ from models.models import Question, Answer, Game, Participant
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['question','answerTime']
+        fields = ['question']
 class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer

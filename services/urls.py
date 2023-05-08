@@ -1,7 +1,6 @@
 from django.urls import path, re_path
 from . import views
 
-#app_name = 'app_name'
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
@@ -27,26 +26,4 @@ urlpatterns = [
     
 
     ]
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    # path('gameUpdateParticipant/<int:public_id>/', views.GameUpdateParticipantView.as_view(), name='game-updateparticipant'),
-
-    # path('game/<int:publicId>/', views.GameDetailView.as_view(), name='game-detail'),
-    # path('game/', views.GameListView.as_view(), name='game-list'),
-    # path('participant/<int:pk>/', views.ParticipantDetailView.as_view(), name='participant-detail'),
-    # path('participant/', views.ParticipantListView.as_view(), name='participant-list'),
-    # path('guess/<int:pk>/', views.GuessDetailView.as_view(), name='guess-detail'),
-    # path('guess/', views.GuessListView.as_view(), name='guess-list'),
-
 

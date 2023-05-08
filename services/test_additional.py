@@ -317,7 +317,7 @@ class GamePlayViewTest(TestCase):
         self.assertTrue(response_data['success'])
 
         participant = Participant.objects.get(alias='TestParticipant', game__publicId='123456')
-        self.assertEqual(participant.points, 10)
+        self.assertEqual(participant.points, 1)
 
         
         
