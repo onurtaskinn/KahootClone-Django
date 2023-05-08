@@ -25,7 +25,7 @@ else:
 
 print(DEBUG)    
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fourthassignmentgroup16.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'thirdassignmentgroup16.onrender.com']
 
 AUTH_USER_MODEL = 'models.User'
 
@@ -83,7 +83,7 @@ TEMPLATES = [
 
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
-    "https://FourthAssignmentVue16.onrender.com",
+    "https://fourthassignmentvue16.onrender.com",
 ]
 
 WSGI_APPLICATION = 'kahootclone.wsgi.application'
